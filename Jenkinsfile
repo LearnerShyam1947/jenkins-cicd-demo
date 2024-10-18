@@ -58,4 +58,10 @@ pipeline {
             }
         }
     }
+
+    post {
+        success {
+            echo 'Build and push to Docker Hub was successful!'
+        }
+    }
 }
