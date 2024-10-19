@@ -7,8 +7,8 @@ pipeline {
     }
 
     environment {
-        DOCKER_CREDENTIALS_ID = 'dockerhub_credentials' // Your Docker Hub credentials ID in Jenkins
-        DOCKER_IMAGE_NAME = 'karnamshyam1947/springboot-jenkins-cicd-demo' // Update with your Docker Hub username and image name
+        DOCKER_CREDENTIALS_ID = 'dockerhub_credentials' 
+        DOCKER_IMAGE_NAME = 'karnamshyam1947/springboot-jenkins-cicd-demo' 
     }
 
     stages {
@@ -28,15 +28,24 @@ pipeline {
         stage('Build Spring Boot Project') {
             steps {
 
-                // Run Maven on a Unix agent.
+                
                 sh "mvn -Dmaven.test.failure.ignore=true -DskipTests clean package"
+            }
+        }
+
+        steps{
+            withSonarQubeEnv('SonaeQubeServer') { 
+                // If you have configured more than one global server connection, you can specify its name
+        //      sh "${scannerHome}/bin/sonar-scanner"
+                // sh "mvn sonar:sonar"
+                sh "mvn clean verify sonar:sonar -Dsonar.projectKey=Jenkins-cicd-demo -Dsonar.projectName='Jenkins-cicd-demo'"
             }
         }
 
         stage('Build Docker Image') {
             steps {
                 script {
-                    // Build the Docker image
+                    
                     sh "docker build -t ${DOCKER_IMAGE_NAME}:latest ."
                 }
             }
@@ -45,7 +54,7 @@ pipeline {
         stage('Push Docker Image') {
             steps {
                 script {
-                    // Login to Docker Hub
+                    
                     withCredentials([
                         usernamePassword(credentialsId: "${DOCKER_CREDENTIALS_ID}", 
                         passwordVariable: 'DOCKER_PASSWORD', 
@@ -54,7 +63,7 @@ pipeline {
                         sh "echo \$DOCKER_PASSWORD | docker login -u \$DOCKER_USERNAME --password-stdin"
                     }
 
-                    // Push the Docker image
+                    
                     sh "docker push ${DOCKER_IMAGE_NAME}:latest"
                 }
             }
