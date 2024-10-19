@@ -13,6 +13,14 @@ pipeline {
     }
 
     stages {
+        stage('Set Heartbeat Interval') {
+            steps {
+                script {
+                    System.setProperty("org.jenkinsci.plugins.durabletask.BourneShellScript.HEARTBEAT_CHECK_INTERVAL", "86400")
+                }
+            }
+        }
+
         stage('GitHub Checkout') {
             steps {
                 git branch: 'master', credentialsId: 'Jenkins_github_authentication', url: 'https://github.com/LearnerShyam1947/jenkins-cicd-demo' 
@@ -62,6 +70,9 @@ pipeline {
     post {
         success {
             echo 'Build and push to Docker Hub was successful!'
+        }
+        failure {
+            echo 'Build and push to Docker Hub was not successful!'
         }
     }
 }
