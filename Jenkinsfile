@@ -33,7 +33,7 @@ pipeline {
             }
         }
 
-        stage('Build Spring Boot Project'){
+        stage('SonarQube analysis'){
             steps{
                 withSonarQubeEnv('SonaeQubeServer') { 
                     // If you have configured more than one global server connection, you can specify its name
