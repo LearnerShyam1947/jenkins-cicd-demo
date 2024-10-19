@@ -13,13 +13,6 @@ pipeline {
     }
 
     stages {
-        stage('Set Heartbeat Interval') {
-            steps {
-                script {
-                    System.setProperty("org.jenkinsci.plugins.durabletask.BourneShellScript.HEARTBEAT_CHECK_INTERVAL", "86400")
-                }
-            }
-        }
 
         stage('GitHub Checkout') {
             steps {
