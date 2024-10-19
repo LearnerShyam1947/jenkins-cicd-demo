@@ -34,12 +34,24 @@ pipeline {
         }
 
         stage('SonarQube analysis'){
-            steps{
-                withSonarQubeEnv('SonaeQubeServer') { 
-                    // If you have configured more than one global server connection, you can specify its name
-                    // sh "${scannerHome}/bin/sonar-scanner"
-                    // sh "mvn sonar:sonar"
-                    sh "mvn clean verify sonar:sonar -Dsonar.projectKey=Jenkins-cicd-demo -Dsonar.projectName='Jenkins-cicd-demo'"
+            // steps{
+            //     withSonarQubeEnv('SonaeQubeServer') { 
+            //         // If you have configured more than one global server connection, you can specify its name
+            //         // sh "${scannerHome}/bin/sonar-scanner"
+            //         // sh "mvn sonar:sonar"
+            //         sh "mvn clean verify sonar:sonar  "
+            //     }
+            // }
+
+            environment {
+                SCANNER_HOME = tool 'SonarQubeScanner'
+            }
+            steps {
+                withSonarQubeEnv('SonaeQubeServer') {
+                    sh" ${SCANNER_HOME}}/bin/sonar-scanner \
+                    -Dsonar.projectKey=Jenkins-cicd-demo \
+                    -Dsonar.projectName='Jenkins-cicd-demo' \
+                    -Dsonar.sources=. "
                 }
             }
         }
